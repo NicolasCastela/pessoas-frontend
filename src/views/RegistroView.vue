@@ -4,18 +4,10 @@
       <h1 class="text-red">Registro de Pessoas</h1>
     </div>
     <v-form @submit.prevent="submitForm">
-      <v-alert
-        v-model="alerta"
-        type="warning"
-        title="Erro ao Registrar Pessoa"
-        text="Por favor insira um nome e uma idade válidos"
-      ></v-alert>
+      <v-alert v-model="alerta" type="warning" title="Erro ao Registrar Pessoa"
+        text="Por favor insira um nome e uma idade válidos"></v-alert>
       <div class="d-flex flex-row mt-10">
-        <v-text-field
-          v-model="name"
-          class="w-25 mr-10"
-          label="Pessoa"
-        ></v-text-field>
+        <v-text-field v-model="name" class="w-25 mr-10" label="Pessoa"></v-text-field>
         <v-text-field v-model="idade" class="w-25" label="Idade"></v-text-field>
       </div>
       <v-btn type="submit" block text="Submit"></v-btn>
@@ -61,7 +53,6 @@ export default {
       } catch (error) {
         console.error(error);
         console.log("Erro ao registrar pessoa!");
-      } finally {
       }
     },
   },
