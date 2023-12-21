@@ -1,23 +1,28 @@
 <template>
   <v-container>
-    <h1>Adicionar tarefas</h1>
-    <div
-      v-for="tarefa in tarefas"
-      :key="tarefa.id"
-      class="d-flex flex-column h-25 w-50"
-    >
-      <v-text-field v-bind="tarefa" label="Task" class="w-50"></v-text-field>
-      <v-btn @click="criarTask(tarefa)" class="w-50">Enviar</v-btn>
-    </div>
-  </v-container>
+    <v-form @submit.prevent="createTask">
+      <v-text-field
+        v-model="tarefa"
+        placeholder="Nova Tarefa"
+        label="Nova Tarefa"
+      ></v-text-field>
+      <v-btn
+        variant="tonal"
+        color="primary"
+        type="submit"
+        block
+        text="Submit"
+      ></v-btn>
+    </v-form>
 
-  <div
-    v-for="tarefa in tarefas"
-    :key="tarefa.id"
-    class="d-flex flex-column h-25 w-50"
-  >
-    <h1>{{ tarefa.atividade }}</h1>
-  </div>
+    <h1>Adicionar Tarefas</h1>
+    <v-card v-for="tarefa in tarefas" :key="tarefa.id">
+      {{ tarefa.atividade }}
+      <v-btn variant="tonal" color="warning" @click="deleteTask(tarefa.id)"
+        >Apagar</v-btn
+      >
+    </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -26,25 +31,28 @@ export default {
   data() {
     return {
       tarefas: [],
+      tarefa: "",
+      id: "",
     };
   },
   mounted() {
-    this.consumirTask();
+    this.fetchTasks();
   },
   methods: {
-    async consumirTask() {
+    async fetchTasks() {
       try {
         const response = await fetch("http://localhost:3000/task");
         if (!response.ok) {
-          throw new Error("ocorreu um erro");
+          throw new Error("Ocorreu algum erro");
         }
         const data = await response.json();
         this.tarefas = data;
-      } catch (err) {
-        console.error(err);
+        console.log(this.tarefas);
+      } catch (error) {
+        console.error(error);
       }
     },
-    async criarTask(tarefa) {
+    async createTask() {
       try {
         const response = await fetch("http://localhost:3000/task", {
           method: "POST",
@@ -52,22 +60,38 @@ export default {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            atividade: tarefa.atividade,
+            atividade: this.tarefa,
           }),
         });
         if (!response.ok) {
-          throw new Error("ocorreu algum erro ai meu chapa");
-        } else {
-          console.log("criada a TASK com sucesso");
+          throw new Error("sei la fi, deu erro vai arrumar!");
         }
       } catch (error) {
         console.error(error);
       } finally {
-        this.consumirTask();
+        this.fetchTasks();
+      }
+    },
+    async deleteTask(id) {
+      try {
+        const response = await fetch(`http://localhost:3000/task/${id}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          throw new Error("ocorreu um erro");
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.fetchTasks();
       }
     },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+v-card {
+  width: 100%;
+}
+</style>
